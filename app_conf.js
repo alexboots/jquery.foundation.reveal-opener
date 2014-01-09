@@ -21,7 +21,7 @@ $(document).ready(function(){
   };
   
   $('.out').click(function () {
-    PHASES_APP.outLinkClicked( this, app_conf );
+    PHASES_APP.onClickModule.outLinkClicked( this, app_conf );
   });
 
 
