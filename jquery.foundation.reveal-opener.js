@@ -18,6 +18,7 @@ something like:
                                                |else____>[ setupActivate() ]
 
 */
+
 var PHASES_APP = PHASES_APP || {};
 
 PHASES_APP = {
@@ -27,50 +28,36 @@ PHASES_APP = {
 
   //sets everything off.
   outLinkClicked: function( clicked, app_conf ) {
-    event.preventDefault();
+      event.preventDefault();
+ 
+      //need to make this totally seperate module wrapped in immediate function? 
 
-    if( this.checkForStoredCouponId( app_conf )) {
-        console.log('stores Id!')
-
-
-    } else {
-    
       // Grab and store all of the coupon info in Coupon: {}
       this.getCouponInfo( clicked, app_conf );
 
-      //Store ID using localStorage
-
-      //saves couponId to localstorage or with a cookie
+      //saves couponId to localStorage or with a cookie
       this.saveCouponId();
       
       //opens merchant in same page and opens modal in new tab
-      this.clickAction();      
-
-      //setup the modal with either the code or activate message
-      this.codeOrActivate();
-    }
-  },
-
-  checkForStoredCouponId: function() {
-    var checkForCouponId = localStorage.getItem(this.Coupon.app + "_couponId");
-    if( checkForCouponId !== null ) {
-      alert('f');
-      return checkForCouponId;
-    }
+      this.clickAction();
   },
 
   /* clickAction() *************************************
      Forward current window to merchant and     
      Open current window in new tab (modal will load) */
   clickAction: function() {
-    window.location = this.Coupon.outLink;
+    //window.location = this.Coupon.outLink;
     window.open(document.location.href);
   },
 
-
   saveCouponId: function() {
     if(this.vendor.supports_html5_storage() ){
-      localStorage.setItem(this.Coupon.app+"_couponId", this.Coupon.couponId);
+      console.log(this.Coupon.app);
+      console.log(this.Coupon.couponId);
+      
+      console.log(this.Coupon.app+"_couponId");
+      localStorage.setItem("verytemporarilyStored_couponId", this.Coupon.couponId);
+      console.log(localStorage.getItem("verytemporarilyStored_couponId"));
     } else {
       console.log('Set Cookie');
     }
@@ -116,7 +103,6 @@ PHASES_APP = {
     }
   },
 
-
   setupActivate: function () {
     
   },
@@ -157,7 +143,8 @@ PHASES_APP = {
     },
     //set a cookie - this is only used if html5 support is not available 
     set_cookie : function () {
-      //set cookie if no html5
+    //set cookie if no html5
+
     },
 
     /***********************   hasFlash info   *************************
@@ -176,3 +163,5 @@ PHASES_APP = {
     })()
   }//vendor module
 }; //PHASES_APP
+
+PHASES_APP.startModal(); //fire modal if there is an ID saved 

@@ -19,9 +19,6 @@ $(document).ready(function(){
     modal_coupon_code:       '.coupon-code', //coupon code is set to this (can be input or 'a' or div or whatever)
     modal_copy_code_wrap:    '.modal-copy-code-wrap' //it gets hidden if its activated, not coupon
   };
-
-  //PHASES_APP.outLinkClicked.codeOrActivate();
-
   
   $('.out').click(function () {
     PHASES_APP.outLinkClicked( this, app_conf );
