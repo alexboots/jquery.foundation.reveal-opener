@@ -2,6 +2,16 @@
                   2) foundation-5 JS (specifically for the reveal)
                   3) cookies.js (only used / loaded in browsers lt-ie8)
                                                                                 
+      What is this file?! 
+
+        This can be used by any new coupon website to make the users out click work!
+        
+        It will open a new tab with the coupon info code, and 
+        the current window is forwarded to the merchant page.
+
+        Click on a get code button here for an example:
+        http://www.bestcouponsforyou.com/stores/1800flowers
+
       How to use this file!
 
        Each site has a main.js
@@ -10,9 +20,12 @@
          1) set up a app_conf object with the CSS class's used on the site
          2) on document load, have any out link trigger 
             PHASES_APP.startClickAction( this, app_conf );
+
+      Here is a screenshot of the code: 
        
        Example:
-        var app_conf = {
+
+       var app_conf = {
         app_name: "BestCodesForYou",
         class_couponTitle:       ".coupon-title",
         class_couponCode: ".hidden-coupon-code",
@@ -48,11 +61,29 @@
 
     startClickAction: function(clicked, app_conf ) {
       
-      event.preventDefault();
+      event.preventDefault();      
 
       this.onClickModule.getCouponInfo( clicked, app_conf ); // Grabs and saves all of the coupon info in Coupon: {}
       this.onClickModule.saveCouponInfo();                   // Saves couponId to localStorage or with a cookie
       this.onClickModule.clickAction();                      // Opens merchant in same page and opens modal in new tab
+
+    },
+
+    startModalAction: function() {      
+
+      if( this.loadModalModule.checkForCouponInfo() === true ) {
+
+        this.loadModalModule.placeMostCouponInfoOnModal(); // Place everything except for get code / activate
+        this.loadModalModule.checkForCodeOrActivate();     // Setup the modal for an 'activate' type coupon or a coupon with a code 
+
+        this.loadModalModule.openModal();                  // Opens the modal. 
+        this.loadModalModule.deleteCouponInfo();           // Delete the localStorage coupon info
+
+      }
+    },
+
+    startDebugAction: function() {
+      
 
     },
 
@@ -89,6 +120,8 @@
           this.Modal.class_couponDescription = app_conf.class_couponDescription_modal;
           this.Modal.class_couponCode        = app_conf.class_CouponCode_modal;
           this.Modal.class_copyCodeBtnWrap   = app_conf.class_copyCodeBtnWrap_modal;
+
+
         },
 
         /* saveCouponInfo()  ********************************
@@ -126,18 +159,6 @@
       }, //end onClickModule module
 
 
-    startModalAction: function(clicked, app_conf ) {
-      
-      if( this.loadModalModule.checkForCouponInfo() === true ) {
-
-        this.loadModalModule.placeMostCouponInfoOnModal(); // Place everything except for get code / activate
-        this.loadModalModule.checkForCodeOrActivate();     //
-        this.loadModalModule.deleteCouponInfo();           // Delete the localStorage coupon info
-
-      }
-
-    },
-
       /* loadModalModule {} contains everything used in startModalAction() */
       /*******************************************************************/
       loadModalModule: {
@@ -159,8 +180,12 @@
 
         },
 
+        /* debugAppConf() 
+           This is commented out in startModalAction() - but can be enabled to make sure everything is typed correctly in app_conf.
+           It will let you know what classes are not on the page so you can easily fix them. */        
+
         placeMostCouponInfoOnModal: function() {
-          alert( this.infoForModal.Modal.class_couponTitle )
+
           $( this.infoForModal.Modal.modalId + " " + this.infoForModal.Modal.class_couponTitle ).text( this.infoForModal.Coupon.couponTitle );
           $( this.infoForModal.Modal.modalId + " " + this.infoForModal.Modal.class_couponCode ).text( this.infoForModal.Coupon.couponCode );
           $( this.infoForModal.Modal.modalId + " " + this.infoForModal.Modal.class_couponDescription ).text( this.infoForModal.Coupon.couponInfo );
@@ -216,9 +241,10 @@
           console.log('setup with code for mobile');
         },
 
-        openModal: function ( app_conf ) {
-          alert(app_conf)
-          //$( app_conf.id_modal ).foundation('reveal', 'open');
+        openModal: function ( ) {
+
+          $( this.infoForModal.Modal.modalId ).foundation('reveal', 'open');
+
         },
 
         deleteCouponInfo: function() {
@@ -258,10 +284,17 @@
           return hasFlash;
         })()
       }//vendor module
-  }; //PHASES_APP
 
-  // Check to see if the page is being loaded from a user click, and load the modal if it is 
+  };//PHASES_APP
 
-  window.PHASES_APP.startModalAction();
-//window.PHASES_APP.loadModalModule.placeMostCouponInfoOnModal();
+  window.PHASES_APP.startModalAction(); // Check for stored coupon info on every load
+  $(document).foundation();             // Setup foundation
 })(this);
+
+/* add this debug code later 
+  if ( $( this.infoForModal.Modal.class_couponTitle).length === 0  ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.couponTitle + afterClassMessage );             }
+  if ( $( this.infoForModal.Coupon.class_couponCode ).length       ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_couponCode + afterClassMessage );        }
+  if ( $( this.infoForModal.Coupon.class_couponDescription ).length) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_couponDescription + afterClassMessage ); }
+  if ( $( this.infoForModal.Coupon.class_copyCodeBtnWrap ).length  ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_copyCodeBtnWrap + afterClassMessage );   }
+  if ( $( this.infoForModal.Coupon.couponTitle ).length            ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_outLink + afterClassMessage );           }
+*/

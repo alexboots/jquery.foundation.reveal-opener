@@ -59,6 +59,7 @@
   </div>
 
 ---- 
+
   <div class="block-coupon-wrap 1234">
         <div class="hidden-coupon-code">
             
@@ -97,17 +98,19 @@
   
         </a><!-- btn-wrap -->
 
-        <div class="modal-copy-code-wrap">COPY CODE</div>
-
       </div><!-- coupon-btn-wrap -->  
     </div>
   </div>
 
 
 
-  <a href="#" data-reveal-id="myModal">Click Me For A Modal</a>
+  <a href="#" data-reveal-id="modal_show_coupon">Click Me For A Modal</a>
 
-  <div id="myModal" class="reveal-modal small" data-reveal>
+
+  <div id="modal_show_coupon" class="reveal-modal small" data-reveal>
+    
+    <div class="modal-store-name"></div>
+
     <div class="modal-coupon-title"></div>
     
     <div class="modal-coupon-code"></div>
@@ -117,7 +120,10 @@
     <a class="modal-out-link" href="#">out link</a>
 
     <div class="modal-coupon-description"></div>
-  </div>
+
+    <div class="modal-copy-code-wrap">COPY CODE</div>
+    
+  </div><!-- #modal_show_coupon -->
 
     <script src="jquery.js"></script>
     <script src="foundation-5/js/foundation.min.js"></script>
@@ -125,7 +131,7 @@
     <script src="jquery.foundation.reveal-opener.js"></script>
     <script src="app_conf.js"></script>
     <script>
-      $(document).foundation();
+      
     </script>
 	</body>
 </html>

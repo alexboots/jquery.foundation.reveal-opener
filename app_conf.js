@@ -12,15 +12,17 @@ $(document).ready(function(){
 
     id_modal:                '#modal_show_coupon',
     class_storeName_modal:   '.modal-store-name',
-    class_outLink_modal:     '.modal-store-link', //is setting the href on a.modal-store-link
-    class_couponTitle_modal: '.modal-title',
-    class_couponDescription_modal:'.modal-description',
-    class_CouponCode_modal:       '.coupon-code', //coupon code is set to this (can be input or 'a' or div or whatever)
-    class_copyCodeBtnWrap_modal:     '.modal-copy-code-wrap' //it gets hidden if its activated, not coupon
+    class_outLink_modal:     '.modal-out-link', //is setting the href on a.modal-out-link
+    class_couponTitle_modal: '.modal-coupon-title',
+    class_couponDescription_modal:'.modal-coupon-description',
+    class_CouponCode_modal:       '.modal-coupon-code',      //coupon code is set to this (can be input or 'a' or div or whatever)
+    class_copyCodeBtnWrap_modal:     '.modal-copy-code-wrap' //it gets hidden if its 1) activated, not a coupon code or 2) if its a mobile or non-flash device 
   };
   
   $('.out').click(function () {
+    
     PHASES_APP.startClickAction( this, app_conf );
+
   });
 
 
