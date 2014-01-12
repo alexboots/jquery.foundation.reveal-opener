@@ -14,14 +14,13 @@ $(document).ready(function(){
     class_storeName_modal:   '.modal-store-name',
     class_outLink_modal:     '.modal-store-link', //is setting the href on a.modal-store-link
     class_couponTitle_modal: '.modal-title',
-    class_modal_coupon_title:'.modal-coupon-title',
-    modal_coupon_description:'.modal-description',
-    modal_coupon_code:       '.coupon-code', //coupon code is set to this (can be input or 'a' or div or whatever)
-    modal_copy_code_wrap:    '.modal-copy-code-wrap' //it gets hidden if its activated, not coupon
+    class_couponDescription_modal:'.modal-description',
+    class_CouponCode_modal:       '.coupon-code', //coupon code is set to this (can be input or 'a' or div or whatever)
+    class_copyCodeBtnWrap_modal:     '.modal-copy-code-wrap' //it gets hidden if its activated, not coupon
   };
   
   $('.out').click(function () {
-    PHASES_APP.onClickModule.outLinkClicked( this, app_conf );
+    PHASES_APP.startClickAction( this, app_conf );
   });
 
 
