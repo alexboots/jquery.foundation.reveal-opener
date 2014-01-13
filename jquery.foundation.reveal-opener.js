@@ -1,12 +1,13 @@
 /* Dependancies:  1) jQuery           
                   2) foundation-5 JS (specifically for the reveal)
-                  3) cookies.js (only used / loaded in browsers lt-ie8)
+                  3) zClip   
+                  4) cookies.js (only used / loaded in browsers lt-ie8)
                                                                                 
       What is this file?! 
 
         This can be used by any new coupon website to make the users out click work!
         
-        It will open a new tab with the coupon info code, and 
+        It will open a new tab with the coupon info, and 
         the current window is forwarded to the merchant page.
 
         Click on a get code button here for an example:
@@ -22,31 +23,45 @@
             PHASES_APP.startClickAction( this, app_conf );
 
       Here is a screenshot of the code: 
+      todo: PUT LINK TO SCREENSHOT HERE
        
        Example:
 
-       var app_conf = {
-        app_name: "BestCodesForYou",
-        class_couponTitle:       ".coupon-title",
-        class_couponCode: ".hidden-coupon-code",
-        class_couponInfo: ".coupon-description",
-        class_storeName:  ".hidden-store-name",
-        class_outLink: ".out",
-        class_copyCodeBtn: ".btn-copy-code",
+       Need to:
+       test performance between saving the coupon info in localStorage VS
+       saving just the store ID in local Storage and pulling all the info in after that
 
-        id_modal:                '#modal_show_coupon',
-        class_storeName_modal:   '.modal-store-name',
-        class_outLink_modal:     '.modal-store-link', //is setting the href on a.modal-store-link
-        class_couponTitle_modal: '.modal-title',
-        class_couponDescription_modal:'.modal-description',
-        class_CouponCode_modal:       '.coupon-code', //coupon code is set to this (can be input or 'a' or div or whatever)
-        class_copyCodeBtnWrap_modal:     '.modal-copy-code-wrap' //it gets hidden if its activated, not coupon
-      };
+
+        var app_conf = {
+          app_name:             "BestCodesForYou",
+          class_couponTitle:    ".coupon-title",
+          class_couponCode:     ".hidden-coupon-code",
+          class_fullCouponInfo: ".coupon-description",
+          class_storeName:      ".hidden-store-name",
+          class_outLink:        ".out",
+
+          id_modal:                     '#modal_show_coupon',
+          class_couponTitle_modal:      '.modal-coupon-title',
+          class_CouponCode_modal:       '.modal-coupon-code',      // Coupon code is set to this element using text()
+          class_fullCouponInfo_modal:   '.modal-coupon-description',
+          class_storeName_modal:        '.modal-store-name',   
+          class_outLink_modal:          '.modal-out-link',         // Is setting the href on a.modal-out-link
+          class_copyCodeBtn_modal:      '.modal-copy-code-wrap'    // It gets hidden if its 1) activated, not a coupon code or 2) if its a mobile or non-flash device 
+        };
 
       And to launch the app: 
         $('.out').click(function () {
           PHASES_APP.startClickAction( this, app_conf );
         });
+
+      Note:
+        This is the recommended HTML for displaying the code on the modal:
+          <form class="coupon-code-wrap">
+            <input type="text" class="coupon-code" value="TH3C0D3" readonly="readonly" style="z-index: 9999;">
+          </form>
+
+        It will be changed to be a div for mobile.
+
     */
 
 ;(function(window) {
@@ -61,7 +76,7 @@
 
     startClickAction: function(clicked, app_conf ) {
       
-      event.preventDefault();      
+      event.preventDefault();
 
       this.onClickModule.getCouponInfo( clicked, app_conf ); // Grabs and saves all of the coupon info in Coupon: {}
       this.onClickModule.saveCouponInfo();                   // Saves couponId to localStorage or with a cookie
@@ -69,23 +84,22 @@
 
     },
 
-    startModalAction: function() {      
+    startModalAction: function() {
 
       if( this.loadModalModule.checkForCouponInfo() === true ) {
 
         this.loadModalModule.placeMostCouponInfoOnModal(); // Place everything except for get code / activate
-        this.loadModalModule.checkForCodeOrActivate();     // Setup the modal for an 'activate' type coupon or a coupon with a code 
-
+        this.loadModalModule.setupForCodeOrActivate();     // check to see if it has a code or if its an 'actiavted' coupon
         this.loadModalModule.openModal();                  // Opens the modal. 
         this.loadModalModule.deleteCouponInfo();           // Delete the localStorage coupon info
-
       }
     },
 
-    startDebugAction: function() {
+    /* onClickModule {} contains everything used in startClickAction() */
+    /*******************************************************************/
+    siteSpecificModule: (function(){
       
-
-    },
+    }),
 
       /* onClickModule {} contains everything used in startClickAction() */
       /*******************************************************************/
@@ -110,16 +124,17 @@
           this.Coupon.couponTitle = $( class_couponId + " " + app_conf.class_couponTitle ).text().trim();
           this.Coupon.couponCode  = $( class_couponId + " " + app_conf.class_couponCode  ).text().trim();
           this.Coupon.couponInfo  = $( class_couponId + " " + app_conf.class_couponInfo ).text().trim();
-          this.Coupon.storeName   = $( class_couponId + " " + app_conf.class_storeName ).text().trim();
-          this.Coupon.outLink     = $( class_couponId + " .out" ).attr('href').trim();
+          this.Coupon.storeName   = $( class_couponId + " " + app_conf.class_storeName ).text().trim();          
+          this.Coupon.outLink     = $( class_couponId + " " + app_conf.class_outLink ).attr('href').trim();
 
-          this.Modal.modalId           = app_conf.id_modal;
-          this.Modal.class_storeName   = app_conf.class_storeName;
-          this.Modal.class_outLink     = app_conf.class_outLink;
-          this.Modal.class_couponTitle       = app_conf.class_couponTitle_modal;
-          this.Modal.class_couponDescription = app_conf.class_couponDescription_modal;
-          this.Modal.class_couponCode        = app_conf.class_CouponCode_modal;
-          this.Modal.class_copyCodeBtnWrap   = app_conf.class_copyCodeBtnWrap_modal;
+          this.Modal.modalId                    = app_conf.id_modal;
+          this.Modal.class_couponTitle          = app_conf.class_couponTitle_modal;
+          this.Modal.class_couponCode           = app_conf.class_CouponCode_modal;
+          this.Modal.class_outLink              = app_conf.class_outLink_modal;
+          this.Modal.class_fullCouponInfo_modal = app_conf.class_fullCouponInfo_modal;
+          this.Modal.class_storeName            = app_conf.class_storeName_modal;
+          this.Modal.class_copyCodeBtn_modal    = app_conf.class_copyCodeBtn_modal;
+          this.Modal.class_modalCheckoutInstructions  = app_conf.class_modalCheckoutInstructions;
 
 
         },
@@ -171,8 +186,10 @@
            If nothing is stores nothing else in this module is triggered */
 
         checkForCouponInfo: function() {
-
-          this.infoForModal = JSON.parse( localStorage.getItem( window.PHASES_APP.localStorageName ) );
+          var getCouponInfo =  localStorage.getItem( window.PHASES_APP.localStorageName ) ,
+              parseCouponInfo = JSON.parse( getCouponInfo );
+              
+          this.infoForModal = parseCouponInfo;
 
           if(this.infoForModal !== null) { // if there is saved coupon info, set off the modal methods          
             return true;
@@ -180,40 +197,43 @@
 
         },
 
-        /* debugAppConf() 
-           This is commented out in startModalAction() - but can be enabled to make sure everything is typed correctly in app_conf.
-           It will let you know what classes are not on the page so you can easily fix them. */        
-
         placeMostCouponInfoOnModal: function() {
 
-          $( this.infoForModal.Modal.modalId + " " + this.infoForModal.Modal.class_couponTitle ).text( this.infoForModal.Coupon.couponTitle );
-          $( this.infoForModal.Modal.modalId + " " + this.infoForModal.Modal.class_couponCode ).text( this.infoForModal.Coupon.couponCode );
-          $( this.infoForModal.Modal.modalId + " " + this.infoForModal.Modal.class_couponDescription ).text( this.infoForModal.Coupon.couponInfo );
-          $( this.infoForModal.Modal.modalId + " " + this.infoForModal.Modal.class_copyCodeBtnWrap ).text( this.infoForModal.Coupon.couponTitle );
-          $( this.infoForModal.Modal.modalId + " " + this.infoForModal.Modal.class_outLink ).text( this.infoForModal.Coupon.couponTitle );
-        
+          $( this.infoForModal.Modal.modalId + " " + 
+             this.infoForModal.Modal.class_couponTitle          ).text( this.infoForModal.Coupon.couponTitle);
+
+          $( this.infoForModal.Modal.modalId + " " + 
+             this.infoForModal.Modal.class_couponCode           ).text( this.infoForModal.Coupon.couponCode );
+
+          $( this.infoForModal.Modal.modalId + " " + 
+             this.infoForModal.Modal.class_fullCouponInfo_modal ).text( this.infoForModal.Coupon.couponInfo );
+          
+          $( this.infoForModal.Modal.modalId + " " + 
+             this.infoForModal.Modal.class_storeName            ).text( this.infoForModal.Coupon.storeName  );
+
+          this.setModalOutLinks();
+
+        },
+
+        setModalOutLinks: function() {
+          var $modalOutLinks = $( this.infoForModal.Modal.class_couponTitle );
+          
+          console.log($modalOutLinks);
         },
           
         /* codeOrActivate() **********************************************************
          * @Checks to see if this coupon has a code.
          * @It then sets up either the coupon or the 'Activated!' text on the modal. */
 
-        checkForCodeOrActivate: function() {
+        setupForCodeOrActivate: function() {
 
           if( this.infoForModal.Coupon.couponCode.length !== 0 ) {
             
             this.setupCode();
-            
-
           } else {
-
+            
             this.setupActivate();
-
           }
-        },
-
-        setupActivate: function () {
-
         },
 
         /* setupCode() **********************************************************
@@ -223,28 +243,84 @@
 
         setupCode: function() {
           
+          $( this.infoForModal.Modal.class_modalCheckoutInstructions ).text(" and paste your code at checkout.");
+          
           //Setup for flash (using input and copy btn)
-          if( !window.PHASES_APP.vendor.hasFlash ) {
-            this.setupModalWithCode_mobile();
+          if( window.PHASES_APP.vendor.hasFlash ) {
+            this.setupModalWithCode();
+            this.addZclip();
           }
           //or not flash (with div containing code - so its copyable on mobile)
           else {
-            this.setupModalWithCode();
+            this.setupModalWithCode_mobile();
           }
         },
+
+        addZclip: function() {
+          $('body').zclip({
+            path: "/vendor/zclip/ZeroClipboard.swf",
+            copy: function() {
+              return $(this).prev( this.infoForModal.Modal.class_couponCode ).text();
+            },
+            afterCopy: function() {
+              $(this).css("background-color", "#80BE80");
+              return $(this).text("Copied!");
+            }
+          });
+        },
+
+        /* setupActivate() *****************************************************
+         * Hide all code-related stuff and setup for activate                  */
+
+        setupActivate: function () {
+
+          $( this.infoForModal.Modal.class_copyCodeBtn_modal ).hide();
+          $( this.infoForModal.Modal.modalId + " form" ).hide();
+          $( this.infoForModal.Modal.class_couponCode).hide(); // Incase its not a form in markup
+          $( this.infoForModal.Modal.class_modalCheckoutInstructions ).text( " and deal will automatically be applied at checkout.");
+        },
         
+        /* setupModalWithCode() *****************************************************
+         * This first checks to see if the code is being dispalyed in a div or a form with input field. 
+         * It sets the val to the code if its a input, and sets the text of the element if its not */
+
         setupModalWithCode: function () {
-          console.log('setup with code');
+          
+
+          if( $(this.infoForModal.Modal.class_couponCode).is('input') ) {
+            
+            $( this.infoForModal.Modal.class_couponCode ).val( this.infoForModal.Coupon.couponCode );
+          } else {
+            
+            $( this.infoForModal.Modal.class_couponCode ).text( this.infoForModal.Coupon.couponCode );
+          }
+
         },
 
         setupModalWithCode_mobile: function () {
-          console.log('setup with code for mobile');
+                    
+          if( $(this.infoForModal.Modal.class_couponCode).is('input') ) {
+
+            // Strip the dot off the couponClass so we can use it to add a div to display code on mobile
+            var couponClass_stripOffDot = this.infoForModal.Modal.class_couponCode.substring(1, this.infoForModal.Modal.class_couponCode.length);
+
+            // Change the form to a div and add the code to that since readonly input is not highlightable on some mobile deviced. 
+            $( this.infoForModal.Modal.modalId + " form" ).after("<div class='" + couponClass_stripOffDot + "'></div>");
+            $( this.infoForModal.Modal.modalId + " form" ).hide();
+
+            // Add coupon to div
+            $( this.infoForModal.Modal.class_couponCode ).text( this.infoForModal.Coupon.couponCode );
+
+          } else {
+            // Else just add it normally if its already a div or a span or something
+            $( this.infoForModal.Modal.class_couponCode ).text( this.infoForModal.Coupon.couponCode );
+          }
+
         },
 
         openModal: function ( ) {
 
           $( this.infoForModal.Modal.modalId ).foundation('reveal', 'open');
-
         },
 
         deleteCouponInfo: function() {
@@ -294,7 +370,7 @@
 /* add this debug code later 
   if ( $( this.infoForModal.Modal.class_couponTitle).length === 0  ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.couponTitle + afterClassMessage );             }
   if ( $( this.infoForModal.Coupon.class_couponCode ).length       ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_couponCode + afterClassMessage );        }
-  if ( $( this.infoForModal.Coupon.class_couponDescription ).length) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_couponDescription + afterClassMessage ); }
-  if ( $( this.infoForModal.Coupon.class_copyCodeBtnWrap ).length  ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_copyCodeBtnWrap + afterClassMessage );   }
+  if ( $( this.infoForModal.Coupon.class_fullCouponInfo_modal ).length) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_fullCouponInfo_modal + afterClassMessage ); }
+  if ( $( this.infoForModal.Coupon.class_copyCodeBtn_modal ).length  ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_copyCodeBtn_modal + afterClassMessage );   }
   if ( $( this.infoForModal.Coupon.couponTitle ).length            ) { console.log ( beforeClassMessage + this.infoForModal.Coupon.class_outLink + afterClassMessage );           }
 */

@@ -3,133 +3,149 @@
 	<head>		
 		<title>WantACode</title>
 
-    <link href="foundation-5/css/normalize.css" media="screen" rel="stylesheet" />
-    <link href="foundation-5/css/foundation.min.css" media="screen" rel="stylesheet" />
+    <link href="vendor/foundation-5/css/normalize.css" media="screen" rel="stylesheet" />
+    <link href="vendor/foundation-5/css/foundation.min.css" media="screen" rel="stylesheet" />
 
     <!-- do lt-ie9 prolly THIS IS NOT REAL  <script src="foundation-5/js/modernizr.js"></script> -->
 
     <style>
+      body {
+        line-height: 20px;
+      }
       .hidden-coupon-code {
         display: none;
+      }
+      h4 {
+        margin-left: 30px;
+      }
+      .coupon-box-wrap {
+        margin: 10px 30px;
+        padding: 6px;
+        border: 1px solid silver;
+      }
+      div {
+        margin: 8px 0px;
+      }
+      .btn-get-coupon {
+        border: 1px solid silver;
+        background-color: orangered;
+        border-radius: 8px;
+        padding: 4px;
+        color: #fff;
+      }
+      .btn-get-coupon:hover {
+        color: #ddd;
+      }
+      .modal-btn-copy {
+        background: green;
+        width: 100px;
+        text-align: center;
+        border-radius: 6px;
+        color: #fff;
+        padding: 4px;
       }
     </style>
 	</head>
 	<body>
 
-    <div class="block-coupon-wrap 50353">
-      <div class="hidden-store-name">franks store</div>
-        <div class="hidden-coupon-code">
-            THECODE
-        </div>
-
-        <a href="/out/50353" class="out coupon-title" data-out="http://some-data-that-is-needed">Save 20% with Military Discount and Code</a>
-
-        <div class="coupon-description">
-          Save 20% for a military discount with code at 1-800-Baskets. Click to shop.
-        </div><!-- coupon-description -->
-
-
-        <div class="coupon-info-wrap">
-          <div class="time-left">
-            Time Left: 10 mins
-          </div><!-- time-left -->
-
-          <div class="last-used">
-            Last Used: about 1 hour
-          </div><!-- last-used -->
-        </div><!-- coupon-info-wrap -->
-
-        <div class="top-6-btn-wrap">
-          <div class="btn-wrap_get-code">
-
-        <a class="out" href="/out/50353">
-          
-          <div type="text" class="coupon-code">
-            
-          </div><!-- coupon-code -->
-
-          <div class="code-cover" style="left: 0px;">
-            <img src="http://www.wantacode.com/assets/landing_4/btn-get-code.png">
-          </div><!-- code-cover -->
-
-        </a><!-- btn-wrap -->
-
-      </div><!-- coupon-btn-wrap -->  
-    </div>
-  </div>
-
----- 
-
-  <div class="block-coupon-wrap 1234">
-        <div class="hidden-coupon-code">
-            
-        </div>
-
-        <a href="/out/1234" class="out coupon-title" data-out="http://some-data-that-is-needed">SOME TITLE</a>
-
-        <div class="coupon-description">
-          SOME DESCRIPTIONS
-        </div><!-- coupon-description -->
+    <h4>Example of coupon with code:</h4>
+             <!-- In rails this number would come from <%= @coupon.id %> -->
+    <div class="coupon-box-wrap 12432">
+      
+      <!-- if something is needed on the modal but doesnt need to be displayed
+                 just set the CSS for them to display: none; -->
+      <div class="hidden-coupon-code">
         
-        <div class="hidden-store-name">MO store</div>
+      </div><!-- hidden-coupon-code -->
 
-        <div class="coupon-info-wrap">
-          <div class="time-left">
-            Time Left: 10 mins
-          </div><!-- time-left -->
+      <div class="hidden-store-name">
+        Some Store Name
+      </div><!-- hidden-store-name -->
 
-          <div class="last-used">
-            Last Used: about 1 hour
-          </div><!-- last-used -->
-        </div><!-- coupon-info-wrap -->
+      <div class="coupon-title">
+        <a href="/out/12432" class="out">30% off Example Coupon Title</a>
+      </div><!-- coupon-title -->
 
-        <div class="top-6-btn-wrap">
-          <div class="btn-wrap_get-code">
+      <div class="coupon-description">
+        30% off Example Coupon Title With This Super Long Explanation
+      </div>
 
-        <a class="out" href="/out/1234">
-          
-          <div type="text" class="coupon-code">
-            
-          </div><!-- coupon-code -->
+      <a href="/out/12432" class="btn-get-coupon out">      
+        Activate Coupon
+      </a>
 
-          <div class="code-cover" style="left: 0px;">
-            <img src="http://www.wantacode.com/assets/landing_4/btn-get-code.png">
-          </div><!-- code-cover -->
-  
-        </a><!-- btn-wrap -->
+    </div><!-- coupon-box-wrap couponId -->
 
-      </div><!-- coupon-btn-wrap -->  
+    <!-- ********************************************************
+         ******************************************************** -->
+
+    <h4>Example of coupon with activate</h4>
+        <!-- example of a coupon -->
+                          <!-- In rails this number would come from <%= @coupon.id %> -->
+    <div class="coupon-box-wrap 98766">
+      
+      <!-- if something is needed on the modal but doesnt need to be displayed
+                 just set the CSS for them to display: none; -->
+      <div class="hidden-coupon-code">
+        TH3C0D3
+      </div><!-- hidden-coupon-code -->
+
+      <div class="hidden-store-name">
+        Some Store Name
+      </div><!-- hidden-store-name -->
+
+      <div class="coupon-title">
+        <a href="/out/98766" class="out">30% off Example Coupon Title</a>
+      </div><!-- coupon-title -->
+
+      <div class="coupon-description">
+        30% off Example Coupon Title With This Super Long Explanation
+      </div>
+
+      <a href="/out/98766" class="btn-get-coupon out">      
+        Get Code
+      </a>
+
+    </div><!-- coupon-box-wrap couponId -->
+      
+   
+  <!-- example of the modal -->
+  <div id="modal-show-coupon" class="reveal-modal small" data-reveal>
+
+    <a href="#" class="modal-coupon-title" target="_blank">
+      modal Coupon Title Placeholder
+    </a><!-- modal-coupon-title -->
+    
+    <form>                     <!-- put this input's z-index in main.css if its neccisary, it might not be -->
+      <input class="modal-coupon-code" val="" readonly="readonly" style="z-index: 9999;">      
+    </form>
+
+    <div class="modal-btn-copy">
+      Copy Code
+    </div><!-- modal-btn-copy -->
+
+    <div class="modal-coupon-description">
+      Coupon Description Placeholder
+    </div><!-- modal-coupon-description -->
+
+    <div>
+      <!-- V this gets the href and the text set (out-link and store-name respectively) -->
+      
+      Go to <a class="modal-out-link modal-store-name" href="#">Placeholder Storename</a>
+      <span class="modal-checkout-instructions"></span>
     </div>
-  </div>
-
-
-
-  <a href="#" data-reveal-id="modal_show_coupon">Click Me For A Modal</a>
-
-
-  <div id="modal_show_coupon" class="reveal-modal small" data-reveal>
     
-    <div class="modal-store-name"></div>
-
-    <div class="modal-coupon-title"></div>
     
-    <div class="modal-coupon-code"></div>
+  </div><!-- #modal-show-coupon -->
+
+    <script src="vendor/jquery.js"></script>
+    <script src="vendor/foundation-5/js/foundation.min.js"></script>
+    <script src="vendor/foundation-5/js/foundation.reveal.js"></script>
+    <script src="vendor/zclip/jquery.zclip.min.js"></script>
     
-    <div class="modal-btn-copy"></div>
-
-    <a class="modal-out-link" href="#">out link</a>
-
-    <div class="modal-coupon-description"></div>
-
-    <div class="modal-copy-code-wrap">COPY CODE</div>
-    
-  </div><!-- #modal_show_coupon -->
-
-    <script src="jquery.js"></script>
-    <script src="foundation-5/js/foundation.min.js"></script>
-    <script src="foundation-5/js/foundation.reveal.js"></script>
     <script src="jquery.foundation.reveal-opener.js"></script>
     <script src="app_conf.js"></script>
+
     <script>
       
     </script>
