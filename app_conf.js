@@ -19,12 +19,9 @@ $(document).ready(function(){
     class_modalCheckoutInstructions: '.modal-checkout-instructions'
   };
   
-  $('.out').click(function () {
-    
+  $('.out').click(function () {    
     PHASES_APP.startClickAction( this, app_conf );
-
   });
-
 });//ready 
 
 $(document).foundation();

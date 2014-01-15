@@ -127,7 +127,7 @@
           this.Coupon.app         =    app_conf.app_name;
           this.Coupon.couponTitle = $( class_couponId + " " + app_conf.class_couponTitle ).text().trim();
           this.Coupon.couponCode  = $( class_couponId + " " + app_conf.class_couponCode  ).text().trim();
-          this.Coupon.couponInfo  = $( class_couponId + " " + app_conf.class_couponInfo ).text().trim();
+          this.Coupon.couponInfo  = $( class_couponId + " " + app_conf.class_fullCouponInfo ).text().trim();
           this.Coupon.storeName   = $( class_couponId + " " + app_conf.class_storeName ).text().trim();
           this.Coupon.outLink     = $( class_couponId + " " + app_conf.class_outLink ).attr('href').trim();
 

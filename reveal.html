@@ -82,8 +82,7 @@
     <h4>Example of coupon with code:</h4>
         <!-- example of a coupon -->
                           <!-- In rails this number would come from <%= @coupon.id %> -->
-    <div class="coupon-box-wrap 98766">
-      
+    <div class="coupon-box-wrap 98766">      
       <!-- if something is needed on the modal but doesnt need to be displayed
                  just set the CSS for them to display: none; -->
       <div class="hidden-coupon-code">
@@ -106,7 +105,6 @@
         Get Code
       </a>
     </div><!-- coupon-box-wrap couponId -->
-      
    
   <!-- example of the modal -->
   <div id="modal-show-coupon" class="reveal-modal small" data-reveal>
@@ -129,7 +127,8 @@
     <div>
       <!-- V this gets the href and the text set (out-link and store-name respectively) -->
       
-      Go to <a class="modal-out-link modal-store-name" href="/out/outLinkPlaceholder">Placeholder Storename</a>
+      Go to 
+      <a class="modal-out-link modal-store-name" href="/out/outLinkPlaceholder">Placeholder Storename</a>
       <span class="modal-checkout-instructions"></span>
     </div>
   </div><!-- #modal-show-coupon -->
