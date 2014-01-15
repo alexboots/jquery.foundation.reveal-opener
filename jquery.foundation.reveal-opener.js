@@ -29,11 +29,6 @@
        
        Example:
 
-       Need to:
-       test performance between saving the coupon info in localStorage VS
-       saving just the store ID in local Storage and pulling all the info in after that
-
-
         var app_conf = {
           app_name:             "BestCodesForYou",
           class_couponTitle:    ".coupon-title",
@@ -57,12 +52,21 @@
         });
 
       Note:
-        This is the recommended HTML for displaying the code on the modal:
+        This is the recommended HTML for displaying the code on the modal/reveal:
+
           <form class="coupon-code-wrap">
             <input type="text" class="coupon-code" value="TH3C0D3" readonly="readonly" style="z-index: 9999;">
           </form>
 
-        It will be changed to be a div for mobile.
+        It will be changed to be a selectable div for mobile.
+
+        Questions:
+          What if the site doesnt have a storename on the modal, or doesnt have fullCouponInfo being display?
+        Answer:
+          Thats fine! Just leave them out! The app_conf Object does not need to have all of the above options included.
+          These are the max-things might need, but leaving any of them out is totally fine. Nothing bad will happen! 
+
+        If there are any more questions or concers hit me up at: alex@58phases.com :) 
 
     */
 
