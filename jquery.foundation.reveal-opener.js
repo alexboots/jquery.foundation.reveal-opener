@@ -218,17 +218,15 @@
 
         // Anything with a class_outLink_modal is going to given an out url 
         setModalOutLinks: function() {
-          
+              
+              // Grab all out links on modal
           var $allOutLinks = $( this.infoForModal.Modal.class_outLink ),
               i = 0;
 
-          console.log(this.infoForModal.Coupon.outLink);
-
+          // Set all out links on modal
           for(; i < $allOutLinks.length; i++){
-            console.log($allOutLinks[i].attributes[0])            
+            $allOutLinks[i].href = this.infoForModal.Coupon.outLink;
           }
- 
-          
         },
           
         /* codeOrActivate() **********************************************************
