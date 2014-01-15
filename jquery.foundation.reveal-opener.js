@@ -1,3 +1,5 @@
+ 
+
 /* Dependancies:  1) jQuery           
                   2) foundation-5 JS (specifically for the reveal)
                   3) zClip   
@@ -69,8 +71,6 @@
   var PHASES_APP = PHASES_APP || {};
 
   window.PHASES_APP = {
-    //store all coupon info in this
-    //populated on click by getCouponInfo()
     
     localStorageName: "verytemporarilyStoredCouponInfo",
 
@@ -124,7 +124,7 @@
           this.Coupon.couponTitle = $( class_couponId + " " + app_conf.class_couponTitle ).text().trim();
           this.Coupon.couponCode  = $( class_couponId + " " + app_conf.class_couponCode  ).text().trim();
           this.Coupon.couponInfo  = $( class_couponId + " " + app_conf.class_couponInfo ).text().trim();
-          this.Coupon.storeName   = $( class_couponId + " " + app_conf.class_storeName ).text().trim();          
+          this.Coupon.storeName   = $( class_couponId + " " + app_conf.class_storeName ).text().trim();
           this.Coupon.outLink     = $( class_couponId + " " + app_conf.class_outLink ).attr('href').trim();
 
           this.Modal.modalId                    = app_conf.id_modal;
@@ -192,6 +192,7 @@
           this.infoForModal = parseCouponInfo;
 
           if(this.infoForModal !== null) { // if there is saved coupon info, set off the modal methods          
+            console.log( this.infoForModal );
             return true;
           }
 
@@ -199,26 +200,35 @@
 
         placeMostCouponInfoOnModal: function() {
 
-          $( this.infoForModal.Modal.modalId + " " + 
+          $( this.infoForModal.Modal.modalId + " " +
              this.infoForModal.Modal.class_couponTitle          ).text( this.infoForModal.Coupon.couponTitle);
 
-          $( this.infoForModal.Modal.modalId + " " + 
+          $( this.infoForModal.Modal.modalId + " " +
              this.infoForModal.Modal.class_couponCode           ).text( this.infoForModal.Coupon.couponCode );
 
-          $( this.infoForModal.Modal.modalId + " " + 
+          $( this.infoForModal.Modal.modalId + " " +
              this.infoForModal.Modal.class_fullCouponInfo_modal ).text( this.infoForModal.Coupon.couponInfo );
           
-          $( this.infoForModal.Modal.modalId + " " + 
+          $( this.infoForModal.Modal.modalId + " " +
              this.infoForModal.Modal.class_storeName            ).text( this.infoForModal.Coupon.storeName  );
 
           this.setModalOutLinks();
 
         },
 
+        // Anything with a class_outLink_modal is going to given an out url 
         setModalOutLinks: function() {
-          var $modalOutLinks = $( this.infoForModal.Modal.class_couponTitle );
           
-          console.log($modalOutLinks);
+          var $allOutLinks = $( this.infoForModal.Modal.class_outLink ),
+              i = 0;
+
+          console.log(this.infoForModal.Coupon.outLink);
+
+          for(; i < $allOutLinks.length; i++){
+            console.log($allOutLinks[i].attributes[0])            
+          }
+ 
+          
         },
           
         /* codeOrActivate() **********************************************************
@@ -247,8 +257,13 @@
           
           //Setup for flash (using input and copy btn)
           if( window.PHASES_APP.vendor.hasFlash ) {
+            
             this.setupModalWithCode();
-            this.addZclip();
+            
+               //add zClip's copy SWF on modal load
+            $( this.infoForModal.Modal.modalId  ).bind('opened', function() {
+              window.PHASES_APP.loadModalModule.addZclip();
+            });
           }
           //or not flash (with div containing code - so its copyable on mobile)
           else {
@@ -257,12 +272,31 @@
         },
 
         addZclip: function() {
-          $('body').zclip({
-            path: "/vendor/zclip/ZeroClipboard.swf",
+          var zclipUrl = "",
+              pathArray = window.location.pathname.split('/'),
+              isInput = $(this.infoForModal.Modal.class_couponCode).is('input');
+
+
+
+          // zClips SWF has to be set in relation to the root url, not the page
+          // NEED TO TEST THIS - should work on everything though
+          for( i = 0; i < pathArray.length - 1 ; i++ ) {
+            if( pathArray[i].length !== 0 ) {
+              zclipUrl += "/" + pathArray[i];
+            }
+          }
+
+          $( this.infoForModal.Modal.class_copyCodeBtn_modal ).zclip({
+            path: zclipUrl + "/vendor/zclip/ZeroClipboard.swf",
             copy: function() {
-              return $(this).prev( this.infoForModal.Modal.class_couponCode ).text();
+              if(isInput === true) {
+                return $(this).prev().find('input').val();
+              } else {
+                return $(this).prev().text();
+              }
             },
             afterCopy: function() {
+
               $(this).css("background-color", "#80BE80");
               return $(this).text("Copied!");
             }
