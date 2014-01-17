@@ -1,5 +1,3 @@
- 
-
 /* Dependancies:  1) jQuery           
                   2) foundation-5 JS (specifically for the reveal)
                   3) zClip   
@@ -24,9 +22,9 @@
          2) on document load, have any out link trigger 
             PHASES_APP.startClickAction( this, app_conf );
 
-      Here is a screenshot of the code: 
-      todo: PUT LINK TO SCREENSHOT HERE
-       
+      Download an example/skeleton version of this at:
+       http://58phases.com/snippets
+
        Example:
 
         var app_conf = {
@@ -78,14 +76,11 @@
     
     localStorageName: "verytemporarilyStoredCouponInfo",
 
-    startClickAction: function(clicked, app_conf ) {
-      
-      event.preventDefault();
+    startClickAction: function(clicked, app_conf ) {  
 
       this.onClickModule.getCouponInfo( clicked, app_conf ); // Grabs and saves all of the coupon info in Coupon: {}
       this.onClickModule.saveCouponInfo();                   // Saves couponId to localStorage or with a cookie
       this.onClickModule.clickAction();                      // Opens merchant in same page and opens modal in new tab
-
     },
 
     startModalAction: function() {
@@ -140,7 +135,6 @@
           this.Modal.class_copyCodeBtn_modal    = app_conf.class_copyCodeBtn_modal;
           this.Modal.class_modalCheckoutInstructions  = app_conf.class_modalCheckoutInstructions;
 
-
         },
 
         /* saveCouponInfo()  ********************************
@@ -152,17 +146,11 @@
           if(window.PHASES_APP.vendor.supports_html5_storage() ){
             
             var objectsToSave = {Coupon: this.Coupon, Modal: this.Modal},
-                stringifiedInfoToSave = JSON.stringify( objectsToSave );
+                stringifiedInfoToSave = JSON.stringify( objectsToSave );                
             
             localStorage.setItem( window.PHASES_APP.localStorageName, stringifiedInfoToSave);
-
           } else {
             
-            //load in the cookies script so we can set a cookie
-            $.getScript("vendor/js/cookies.js", function(){
-              //cookie script laoded
-              //set cookie here. 
-            });
           }
         },
 
@@ -196,7 +184,7 @@
           this.infoForModal = parseCouponInfo;
 
           if(this.infoForModal !== null) { // if there is saved coupon info, set off the modal methods          
-            console.log( this.infoForModal );
+            
             return true;
           }
 
@@ -369,9 +357,11 @@
       vendor: {
         //check for html5 support
         supports_html5_storage: function() {
+          
           try {
             return 'localStorage' in window && window['localStorage'] !== null;
           } catch (e) {
+            
             return false;
           }
         },
