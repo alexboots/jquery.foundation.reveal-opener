@@ -1,7 +1,7 @@
 $(document).ready(function(){
   
   //Check out vendor/jquery.modal-opener.js for info on this. 
-  var app_conf = {
+  var app_conf_58P = {
     app_name:             "BestCodesForYou",
     class_couponTitle:    ".coupon-title",
     class_couponCode:     ".hidden-coupon-code",
@@ -19,9 +19,13 @@ $(document).ready(function(){
     class_modalCheckoutInstructions: '.modal-checkout-instructions'
   };
   
-  $('.out').click(function () {    
-    PHASES_APP.startClickAction( this, app_conf );
+  //Hook up click 
+  $('.out').click(function () {
+    PHASES_APP.startClickAction(this);
   });
+  //Send app_conf to modal
+  PHASES_APP.startModalAction( app_conf_58P );
+
 });//ready 
 
 $(document).foundation();

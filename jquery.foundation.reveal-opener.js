@@ -21,13 +21,15 @@
          1) set up a app_conf object with the CSS class's used on the site
          2) on document load, have any out link trigger 
             PHASES_APP.startClickAction( this, app_conf );
+         3) pass the app_conf to the modal loader 
+            PHASES_APP.startModalAction( app_conf_58P );
 
       Download an example/skeleton version of this at:
        http://58phases.com/snippets
 
        Example:
 
-        var app_conf = {
+        var app_conf_58P = {
           app_name:             "BestCodesForYou",
           class_couponTitle:    ".coupon-title",
           class_couponCode:     ".hidden-coupon-code",
@@ -73,31 +75,47 @@
   var PHASES_APP = PHASES_APP || {};
 
   window.PHASES_APP = {
-    
-    localStorageName: "verytemporarilyStoredCouponInfo",
 
-    startClickAction: function(clicked, app_conf ) {  
+    startClickAction: function( clicked ) {
 
-      this.onClickModule.getCouponInfo( clicked, app_conf ); // Grabs and saves all of the coupon info in Coupon: {}
-      this.onClickModule.saveCouponInfo();                   // Saves couponId to localStorage or with a cookie
-      this.onClickModule.clickAction();                      // Opens merchant in same page and opens modal in new tab
+      var couponId = this.onClickModule.getCouponId( clicked ); // Grabs and saves all of the coupon info in Coupon: {}
+      this.onClickModule.saveCouponId( couponId );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
+      this.onClickModule.clickAction();          // Opens merchant in same page and opens modal in new tab
+
+
     },
 
-    startModalAction: function() {
+    //this.startClickAction.getAppName() + "tempCouponInfo",
+    startModalAction: function( app_conf ) {
 
-      if( this.loadModalModule.checkForCouponInfo() === true ) {
+      if( this.loadModalModule.checkForCouponId() === true ) {
 
-        this.loadModalModule.placeMostCouponInfoOnModal(); // Place everything except for get code / activate
+        this.loadModalModule.checkForCouponId();
+        this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate
         this.loadModalModule.setupForCodeOrActivate();     // check to see if it has a code or if its an 'actiavted' coupon
-        this.loadModalModule.openModal();                  // Opens the modal. 
+        //this.loadModalModule.openModal();                  // Opens the modal. 
         this.loadModalModule.deleteCouponInfo();           // Delete the localStorage coupon info
+
       }
+    },
+
+    /* domainNameStr(). 
+
+      This is the localStorage key, used to save and get the couponId.
+      Grabs the domain name and makes it a string.      
+      Seemed like a good way to get a unique key - could do it some other way. */
+
+    domainNameStr: function() {
+      var hostArray = window.location.hostname.split('.'),
+          hostString = hostArray.join('');
+
+      return hostString;
     },
 
     /* onClickModule {} contains everything used in startClickAction() */
     /*******************************************************************/
-    siteSpecificModule: (function(){
-      
+    siteSpecificModule: (function(){ //not sure how to get this working yet 
+      /* eg: if( app_config.app_name === wac_app )  { wac_app.someFunc() }; */
     }),
 
       /* onClickModule {} contains everything used in startClickAction() */
@@ -109,48 +127,24 @@
         Modal: {}, //this will store the classes needed to populate the modal
 
         //populate Coupon object with all coupon info
-        getCouponInfo: function( clicked, app_conf ) {
+        getCouponId: function( clicked ) {
 
-          // Grab coupon from the clicked link 
-          this.Coupon.couponId = $( clicked ).attr('href').match(/\d+$/)[0].trim();
-          
-          //a coupons ID is placed on the wrapper for every coupons
-          //eg: <div class="coupon-wrap 34240"> //the coupon </div>
-          //So, we can grab the coupon info using the couponId class
-          class_couponId = '.' + this.Coupon.couponId;
-
-          this.Coupon.app         =    app_conf.app_name;
-          this.Coupon.couponTitle = $( class_couponId + " " + app_conf.class_couponTitle ).text().trim();
-          this.Coupon.couponCode  = $( class_couponId + " " + app_conf.class_couponCode  ).text().trim();
-          this.Coupon.couponInfo  = $( class_couponId + " " + app_conf.class_fullCouponInfo ).text().trim();
-          this.Coupon.storeName   = $( class_couponId + " " + app_conf.class_storeName ).text().trim();
-          this.Coupon.outLink     = $( class_couponId + " " + app_conf.class_outLink ).attr('href').trim();
-
-          this.Modal.modalId                    = app_conf.id_modal;
-          this.Modal.class_couponTitle          = app_conf.class_couponTitle_modal;
-          this.Modal.class_couponCode           = app_conf.class_CouponCode_modal;
-          this.Modal.class_outLink              = app_conf.class_outLink_modal;
-          this.Modal.class_fullCouponInfo_modal = app_conf.class_fullCouponInfo_modal;
-          this.Modal.class_storeName            = app_conf.class_storeName_modal;
-          this.Modal.class_copyCodeBtn_modal    = app_conf.class_copyCodeBtn_modal;
-          this.Modal.class_modalCheckoutInstructions  = app_conf.class_modalCheckoutInstructions;
-
+          // Grabs the coupon Id
+          return $( clicked ).attr('href').match(/\d+$/)[0].trim();
         },
 
-        /* saveCouponInfo()  ********************************
-           Saves all of the clicked coupon info in localStorage so the modal can grab it
-           The coupon info is stringified because localStorage can only store strings.*/
+        /* saveCouponId()  ********************************
+           Saved the coupon Id so the modal can use it to load all the coupon info.
+           Uses the sites URL as the key to store and grab the coupon. */
 
-        saveCouponInfo: function() {
-                                      //if localStorage is supported (ie8+)
+        saveCouponId: function( couponId ) {
+          //if localStorage is supported (ie8+)
           if(window.PHASES_APP.vendor.supports_html5_storage() ){
-            
-            var objectsToSave = {Coupon: this.Coupon, Modal: this.Modal},
-                stringifiedInfoToSave = JSON.stringify( objectsToSave );                
-            
-            localStorage.setItem( window.PHASES_APP.localStorageName, stringifiedInfoToSave);
+
+            localStorage.setItem( window.PHASES_APP.domainNameStr(), couponId);
+
           } else {
-            
+            //$ get cookie script
           }
         },
 
@@ -159,10 +153,9 @@
            Open current window in new tab (modal will load) */
 
         clickAction: function() {
-          //window.location = this.Coupon.outLink;
+          window.location = this.Coupon.outLink; // This shouldn't be needed but including it. Can't hurt.
           window.open(document.location.href);
         },
-
       }, //end onClickModule module
 
 
@@ -170,54 +163,62 @@
       /*******************************************************************/
       loadModalModule: {
 
-        infoForModal: null,
+        couponId: null,
+        coupon: {},
+        modal:  {},
 
-        /* checkForCouponInfo()
-           This is triggered on document.load.
-           Checks to see if a coupon as just clicked, and had its info stored.
-           If nothing is stores nothing else in this module is triggered */
+        /* checkForCouponId()
+           This is triggered on document.load
+           Checks to see if a coupon was just clicked, and had its info stored.
+           If nothing is stored nothing else in this module is triggered */
 
-        checkForCouponInfo: function() {
-          var getCouponInfo =  localStorage.getItem( window.PHASES_APP.localStorageName ) ,
-              parseCouponInfo = JSON.parse( getCouponInfo );
-              
-          this.infoForModal = parseCouponInfo;
+        checkForCouponId: function() {
 
-          if(this.infoForModal !== null) { // if there is saved coupon info, set off the modal methods          
-            
+          var storageKey = window.PHASES_APP.domainNameStr();
+              getCouponId =  localStorage.getItem( window.PHASES_APP.domainNameStr() );
+          
+          this.couponId = getCouponId;
+
+          if(this.couponId !== null) { // if there is saved coupon info, set off the modal methods          
+
             return true;
           }
-
         },
 
-        placeMostCouponInfoOnModal: function() {
-
-          $( this.infoForModal.Modal.modalId + " " +
-             this.infoForModal.Modal.class_couponTitle          ).text( this.infoForModal.Coupon.couponTitle);
-
-          $( this.infoForModal.Modal.modalId + " " +
-             this.infoForModal.Modal.class_couponCode           ).text( this.infoForModal.Coupon.couponCode );
-
-          $( this.infoForModal.Modal.modalId + " " +
-             this.infoForModal.Modal.class_fullCouponInfo_modal ).text( this.infoForModal.Coupon.couponInfo );
+        placeMostCouponInfoOnModal: function( app_conf ) {
           
-          $( this.infoForModal.Modal.modalId + " " +
-             this.infoForModal.Modal.class_storeName            ).text( this.infoForModal.Coupon.storeName  );
+          var class_couponId = "." + this.couponId;
 
-          this.setModalOutLinks();
+          this.coupon.title     = $( class_couponId + " " + app_conf.class_couponTitle ).text().trim();
+          this.coupon.code      = $( class_couponId + " " + app_conf.class_couponCode  ).text().trim();
+          this.coupon.fullInfo  = $( class_couponId + " " + app_conf.class_fullCouponInfo ).text().trim();
+          this.coupon.storeName = $( class_couponId + " " + app_conf.class_storeName ).text().trim();
+          this.coupon.outLink   = $( class_couponId + " " + app_conf.class_outLink ).attr('href').trim();
+
+          // These are all classes
+          this.modal.id    = app_conf.id_modal;
+          this.modal.title = class_couponTitle_modal;
+          this.modal.code  = class_CouponCode_modal;
+          this.modal.fullInfo       = class_fullCouponInfo_modal;
+          this.modal.checkoutInstructions = class_modalCheckoutInstructions;
+
+          this.modal.class_outLink        = class_outLink_modal;
+          this.modal.copyCodeBtn    = class_copyCodeBtn_modal;
+          
+
 
         },
 
         // Anything with a class_outLink_modal is going to given an out url 
-        setModalOutLinks: function() {
+        setModalOutLinks: function( class_outLink ) {
               
               // Grab all out links on modal
-          var $allOutLinks = $( this.infoForModal.Modal.class_outLink ),
+          var $allOutLinks = $( class_outLink ),
               i = 0;
 
           // Set all out links on modal
           for(; i < $allOutLinks.length; i++){
-            $allOutLinks[i].href = this.infoForModal.Coupon.outLink;
+            $allOutLinks[i].href = this.appInfo.outLink;
           }
         },
           
@@ -348,7 +349,7 @@
         },
 
         deleteCouponInfo: function() {
-          localStorage.removeItem( window.PHASES_APP.localStorageName );
+          localStorage.removeItem( window.PHASES_APP.domainNameStr() );
         }
 
       }, //end loadModalModule
@@ -389,7 +390,6 @@
 
   };//PHASES_APP
 
-  window.PHASES_APP.startModalAction(); // Check for stored coupon info on every load
   $(document).foundation();             // Setup foundation
 })(this);
 
