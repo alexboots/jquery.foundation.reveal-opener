@@ -93,7 +93,7 @@
         this.loadModalModule.checkForCouponId();
         this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate
         this.loadModalModule.setupForCodeOrActivate();     // check to see if it has a code or if its an 'actiavted' coupon
-        //this.loadModalModule.openModal();                  // Opens the modal. 
+        this.loadModalModule.openModal();                  // Opens the modal. 
         this.loadModalModule.deleteCouponInfo();           // Delete the localStorage coupon info
 
       }
@@ -195,18 +195,14 @@
           this.coupon.storeName = $( class_couponId + " " + app_conf.class_storeName ).text().trim();
           this.coupon.outLink   = $( class_couponId + " " + app_conf.class_outLink ).attr('href').trim();
 
-          // These are all classes
-          this.modal.id    = app_conf.id_modal;
-          this.modal.title = class_couponTitle_modal;
-          this.modal.code  = class_CouponCode_modal;
-          this.modal.fullInfo       = class_fullCouponInfo_modal;
-          this.modal.checkoutInstructions = class_modalCheckoutInstructions;
+          this.modal.id       = app_conf.id_modal;
+          this.modal.class_title    = app_conf.class_couponTitle_modal;
+          this.modal.class_code     = app_conf.class_CouponCode_modal;
+          this.modal.class_fullInfo = app_conf.class_fullCouponInfo_modal;
+          this.modal.class_checkoutInstructions = app_conf.class_modalCheckoutInstructions;
 
-          this.modal.class_outLink        = class_outLink_modal;
-          this.modal.copyCodeBtn    = class_copyCodeBtn_modal;
-          
-
-
+          this.modal.class_outLink = app_conf.class_outLink_modal;
+          this.modal.class_copyCodeBtn   = app_conf.class_copyCodeBtn_modal;
         },
 
         // Anything with a class_outLink_modal is going to given an out url 
@@ -228,7 +224,7 @@
 
         setupForCodeOrActivate: function() {
 
-          if( this.infoForModal.Coupon.couponCode.length !== 0 ) {
+          if( this.coupon.code.length !== 0 ) {
             
             this.setupCode();
           } else {
@@ -244,7 +240,7 @@
 
         setupCode: function() {
           
-          $( this.infoForModal.Modal.class_modalCheckoutInstructions ).text(" and paste your code at checkout.");
+          $( this.modal.class_checkoutInstructions ).text(" and paste your code at checkout.");
           
           //Setup for flash (using input and copy btn)
           if( window.PHASES_APP.vendor.hasFlash ) {
@@ -252,7 +248,7 @@
             this.setupModalWithCode();
             
                //add zClip's copy SWF on modal load
-            $( this.infoForModal.Modal.modalId  ).bind('opened', function() {
+            $( this.modal.id  ).bind('opened', function() {
               window.PHASES_APP.loadModalModule.addZclip();
             });
           }
@@ -265,7 +261,7 @@
         addZclip: function() {
           var zclipUrl = "",
               pathArray = window.location.pathname.split('/'),
-              isInput = $(this.infoForModal.Modal.class_couponCode).is('input');
+              isInput = $(this.modal.class_code).is('input');
 
 
 
@@ -277,7 +273,7 @@
             }
           }
 
-          $( this.infoForModal.Modal.class_copyCodeBtn_modal ).zclip({
+          $( this.modal.class_copyCodeBtn ).zclip({
             path: zclipUrl + "/vendor/zclip/ZeroClipboard.swf",
             copy: function() {
               if(isInput === true) {
@@ -299,10 +295,10 @@
 
         setupActivate: function () {
 
-          $( this.infoForModal.Modal.class_copyCodeBtn_modal ).hide();
-          $( this.infoForModal.Modal.modalId + " form" ).hide();
-          $( this.infoForModal.Modal.class_couponCode).hide(); // Incase its not a form in markup
-          $( this.infoForModal.Modal.class_modalCheckoutInstructions ).text( " and deal will automatically be applied at checkout.");
+          $( this.modal.class_copyCodeBtn ).hide();
+          $( this.modal.modal.id + " form" ).hide();
+          $( this.modal.class_code).hide(); // Incase its not a form in markup
+          $( this.modal.class_checkoutInstructions ).text( " and deal will automatically be applied at checkout.");
         },
         
         /* setupModalWithCode() *****************************************************
@@ -312,40 +308,40 @@
         setupModalWithCode: function () {
           
 
-          if( $(this.infoForModal.Modal.class_couponCode).is('input') ) {
+          if( $(this.modal.class_code).is('input') ) {
             
-            $( this.infoForModal.Modal.class_couponCode ).val( this.infoForModal.Coupon.couponCode );
+            $( this.modal.class_code ).val( this.coupon.code );
           } else {
             
-            $( this.infoForModal.Modal.class_couponCode ).text( this.infoForModal.Coupon.couponCode );
+            $( this.modal.class_code ).text( this.coupon.code );
           }
 
         },
 
         setupModalWithCode_mobile: function () {
                     
-          if( $(this.infoForModal.Modal.class_couponCode).is('input') ) {
+          if( $(this.modal.class_code).is('input') ) {
 
             // Strip the dot off the couponClass so we can use it to add a div to display code on mobile
-            var couponClass_stripOffDot = this.infoForModal.Modal.class_couponCode.substring(1, this.infoForModal.Modal.class_couponCode.length);
+            var couponClass_stripOffDot = this.modal.class_code.substring(1, this.modal.class_code.length);
 
             // Change the form to a div and add the code to that since readonly input is not highlightable on some mobile deviced. 
-            $( this.infoForModal.Modal.modalId + " form" ).after("<div class='" + couponClass_stripOffDot + "'></div>");
-            $( this.infoForModal.Modal.modalId + " form" ).hide();
+            $( this.modal.id + " form" ).after("<div class='" + couponClass_stripOffDot + "'></div>");
+            $( this.modal.id + " form" ).hide();
 
             // Add coupon to div
-            $( this.infoForModal.Modal.class_couponCode ).text( this.infoForModal.Coupon.couponCode );
+            $( this.modal.class_code ).text( this.coupon.code );
 
           } else {
             // Else just add it normally if its already a div or a span or something
-            $( this.infoForModal.Modal.class_couponCode ).text( this.infoForModal.Coupon.couponCode );
+            $( this.modal.class_code ).text( this.coupon.code );
           }
 
         },
 
         openModal: function ( ) {
 
-          $( this.infoForModal.Modal.modalId ).foundation('reveal', 'open');
+          $( this.modal.id ).foundation('reveal', 'open');
         },
 
         deleteCouponInfo: function() {
