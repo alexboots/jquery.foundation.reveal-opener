@@ -1,0 +1,62 @@
+.modal-bg {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #333333;
+  background: rgba(3, 3, 3, 0.3);
+
+  z-index: 101;
+
+  transition: display 1s ease-in;
+}
+.modal-wrapper {  
+
+  height: 400px;
+  position: fixed;
+  width: 50%;
+  top: 60%;
+  left: 50%;
+  margin: -25% 0 0 -25%;
+
+  z-index: 102;
+
+  /* Edit the below values */
+  background: red;
+  border-radius: 4px;
+}
+
+  @media (max-width: 1130px) {
+    .modal-wrapper{
+      top: 52%;
+    }
+  }
+  @media (max-width: 930px) {
+    .modal-wrapper{
+      top: 48%;
+    }
+  }
+  @media (max-width: 770px) {
+    .modal-wrapper{
+      top: 26%;
+      width: 80%;
+      left: 20%;
+      margin: -10% 0 0 -10%;
+    }
+  }
+
+.close-modal {
+  cursor: pointer;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+
+  z-index: 103;
+
+  /* Edit the below values */
+  height: 30px;
+  width: 30px;
+  background: yellow;
+}
