@@ -12,6 +12,15 @@
 
   transition: display 1s ease-in;
 }
+
+  .ie7 .modal-bg,
+  .ie8 .modal-bg  {
+    background: transparent;
+    zoom: 1;    
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#4C000000,endColorstr=#4C000000); /* IE 6 & 7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4C000000,endColorstr=#4C000000)"; /* IE8 */
+  }
+
 .modal-wrapper {  
 
   height: 400px;
@@ -27,6 +36,11 @@
   background: red;
   border-radius: 4px;
 }
+  .lt-ie8 .modal-wrapper {
+  
+    filter: alpha(opacity=100);
+  }
+
 
   @media (max-width: 1130px) {
     .modal-wrapper{
