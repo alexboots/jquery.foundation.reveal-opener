@@ -341,7 +341,7 @@
 
         openModal: function ( ) {
 
-          $( this.modal.id ).foundation('reveal', 'open');
+          console.log('OPEN MODAL');
         },
 
         deleteCouponInfo: function() {
@@ -385,8 +385,6 @@
       }//vendor module
 
   };//PHASES_APP
-
-  $(document).foundation();             // Setup foundation
 })(this);
 
 /* add this debug code later 
