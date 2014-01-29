@@ -21,8 +21,7 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4C000000,endColorstr=#4C000000)"; /* IE8 */
   }
 
-.modal-wrapper {  
-
+.modal-wrapper {
   height: 400px;
   position: fixed;
   width: 50%;
@@ -40,7 +39,6 @@
   
     filter: alpha(opacity=100);
   }
-
 
   @media (max-width: 1130px) {
     .modal-wrapper{

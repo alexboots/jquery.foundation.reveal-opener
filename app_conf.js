@@ -27,5 +27,3 @@ $(document).ready(function(){
   PHASES_APP.startModalAction( app_conf_58P );
 
 });//ready 
-
-$(document).foundation();

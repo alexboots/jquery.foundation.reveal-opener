@@ -1,5 +1,4 @@
 /* Dependancies:  1) jQuery           
-                  2) foundation-5 JS (specifically for the reveal)
                   3) zClip   
                   4) cookies.js (only used / loaded in browsers lt-ie8)
                                                                                 
@@ -81,7 +80,6 @@
       var couponId = this.onClickModule.getCouponId( clicked ); // Grabs and saves all of the coupon info in Coupon: {}
       this.onClickModule.saveCouponId( couponId );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
       this.onClickModule.clickAction();          // Opens merchant in same page and opens modal in new tab
-
 
     },
 
@@ -296,7 +294,7 @@
         setupActivate: function () {
 
           $( this.modal.class_copyCodeBtn ).hide();
-          $( this.modal.modal.id + " form" ).hide();
+          $( this.modal.id + " form" ).hide();
           $( this.modal.class_code).hide(); // Incase its not a form in markup
           $( this.modal.class_checkoutInstructions ).text( " and deal will automatically be applied at checkout.");
         },
@@ -341,7 +339,7 @@
 
         openModal: function ( ) {
 
-          console.log('OPEN MODAL');
+          window.PHASES_APP.modalActions.openModal();
         },
 
         deleteCouponInfo: function() {
@@ -349,6 +347,17 @@
         }
 
       }, //end loadModalModule
+
+      modalActions: {
+        openModal: function() {
+          $('.modal-bg').css('display', 'block');
+        },
+
+        closeModal: function() {
+
+          $('.modal-bg').fadeOut('fast');
+        }
+      },
 
       //Vendor module
       vendor: {

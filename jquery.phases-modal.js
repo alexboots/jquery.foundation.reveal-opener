@@ -12,7 +12,7 @@ $(document).ready( function() {
     }
   };
 
-    phases_modal.openModal();
+    //phases_modal.openModal();
     
   $('.close-modal').click(function() {
     phases_modal.closeModal();
