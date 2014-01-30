@@ -91,7 +91,9 @@
         this.loadModalModule.checkForCouponId();
         this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate
         this.loadModalModule.setupForCodeOrActivate();     // check to see if it has a code or if its an 'actiavted' coupon
-        this.loadModalModule.openModal();                  // Opens the modal. 
+        
+        this.modalActions.openModal();                  // Opens the modal. 
+
         this.loadModalModule.deleteCouponInfo();           // Delete the localStorage coupon info
 
       }
@@ -337,11 +339,6 @@
 
         },
 
-        openModal: function ( ) {
-
-          window.PHASES_APP.modalActions.openModal();
-        },
-
         deleteCouponInfo: function() {
           localStorage.removeItem( window.PHASES_APP.domainNameStr() );
         }
@@ -351,11 +348,20 @@
       modalActions: {
         openModal: function() {
           $('.modal-bg').css('display', 'block');
+
+          this.setCloseButtons();
         },
 
-        closeModal: function() {
+        setCloseButtons: function() {
 
-          $('.modal-bg').fadeOut('fast');
+          $('.modal-bg, .close-modal').click(function(e) {
+            if((e.target != this) && (e.target != $('.close-modal'))) {
+            // Do nothing if its a child element being clicked and not the bg 
+               return true;
+            } else {
+             $('.modal-bg').fadeOut('fast');
+            }
+          });
         }
       },
 
