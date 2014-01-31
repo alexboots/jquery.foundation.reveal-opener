@@ -1,3 +1,17 @@
+/* 
+  The two things you need to style:
+    
+    .modal-wrapper {
+      background: red;
+      border-radius: 4px;
+    }
+    .close-modal {
+      height: 30px;
+      width: 30px;
+      background: yellow;
+    }  
+*/
+
 .modal-bg {
   display: none;
   position: absolute;
@@ -30,10 +44,6 @@
   margin: -25% 0 0 -25%;
 
   z-index: 102;
-
-  /* Edit the below values */
-  background: red;
-  border-radius: 4px;
 }
   .lt-ie8 .modal-wrapper {
   
@@ -66,9 +76,4 @@
   top: 8px;
 
   z-index: 103;
-
-  /* Edit the below values */
-  height: 30px;
-  width: 30px;
-  background: yellow;
 }

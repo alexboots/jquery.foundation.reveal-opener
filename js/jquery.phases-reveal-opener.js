@@ -89,8 +89,9 @@
       if( this.loadModalModule.checkForCouponId() === true ) {
 
         this.loadModalModule.checkForCouponId();
-        this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate
+        this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate        
         this.loadModalModule.setupForCodeOrActivate();     // check to see if it has a code or if its an 'actiavted' coupon
+        this.loadModalModule.setModalOutLinks();
         
         this.modalActions.openModal();                  // Opens the modal. 
 
@@ -206,15 +207,15 @@
         },
 
         // Anything with a class_outLink_modal is going to given an out url 
-        setModalOutLinks: function( class_outLink ) {
+        setModalOutLinks: function() {
               
               // Grab all out links on modal
-          var $allOutLinks = $( class_outLink ),
+          var $allOutLinks = $( this.modal.class_outLink ),
               i = 0;
 
           // Set all out links on modal
           for(; i < $allOutLinks.length; i++){
-            $allOutLinks[i].href = this.appInfo.outLink;
+            $allOutLinks[i].href = this.coupon.outLink;
           }
         },
           
@@ -248,9 +249,9 @@
             this.setupModalWithCode();
             
                //add zClip's copy SWF on modal load
-            $( this.modal.id  ).bind('opened', function() {
-              window.PHASES_APP.loadModalModule.addZclip();
-            });
+            
+            window.PHASES_APP.loadModalModule.addZclip();
+            
           }
           //or not flash (with div containing code - so its copyable on mobile)
           else {
