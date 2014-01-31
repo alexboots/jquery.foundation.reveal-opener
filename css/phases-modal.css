@@ -1,5 +1,7 @@
  
+/* Phases modal CSS
    
+   These are the two things you HAVE to style 
     
     .modal-wrapper {
       background: red;
@@ -10,7 +12,8 @@
       width: 30px;
       background: yellow;
     }  
- 
+*/
+
 .modal-bg {
   display: none;
   position: absolute;

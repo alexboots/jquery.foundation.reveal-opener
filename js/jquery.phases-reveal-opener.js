@@ -79,7 +79,7 @@
     startClickAction: function( clicked ) {
 
       var couponId = this.onClickModule.getCouponId( clicked ); // Grabs and saves all of the coupon info in Coupon: {}
-      this.onClickModule.saveCouponId( couponId );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
+      this.onClickModule.saveCouponId( couponId, this.vendor.supports_html5_storage, this.domainNameStr );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
       this.onClickModule.clickAction();          // Opens merchant in same page and opens modal in new tab
 
     },
@@ -87,15 +87,14 @@
     //this.startClickAction.getAppName() + "tempCouponInfo",
     startModalAction: function( app_conf ) {
 
-      if( this.loadModalModule.checkForCouponId() === true ) {
-
-        this.loadModalModule.checkForCouponId();
+      if( this.loadModalModule.checkForCouponId(this.domainNameStr) === true ) {
+        console.log(this.domainNameStr);
         this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate        
-        this.loadModalModule.setupForCodeOrActivate();     // check to see if it has a code or if its an 'actiavted' coupon
+        this.loadModalModule.setupForCodeOrActivate(this.vendor.hasFlash);     // check to see if it has a code or if its an 'actiavted' coupon
         this.loadModalModule.setModalOutLinks();
         this.loadModalModule.openModal();                  // Opens the modal. 
         this.loadModalModule.openModal();
-        this.loadModalModule.deleteCouponInfo();           // Delete the localStorage coupon info
+        this.loadModalModule.deleteCouponInfo(this.domainNameStr);           // Delete the localStorage coupon info
       }
     },
 
@@ -137,11 +136,11 @@
            Saved the coupon Id so the modal can use it to load all the coupon info.
            Uses the sites URL as the key to store and grab the coupon. */
 
-        saveCouponId: function( couponId ) {
+        saveCouponId: function( couponId, supports_html5_storage, domainNameStr ) {
           //if localStorage is supported (ie8+)
-          if(window.PHASES_APP.vendor.supports_html5_storage() ){
+          if(supports_html5_storage() ){
 
-            localStorage.setItem( window.PHASES_APP.domainNameStr(), couponId);
+            localStorage.setItem( domainNameStr(), couponId);
 
           } else {
             //$ get cookie script
@@ -167,16 +166,18 @@
         coupon: {},
         modal:  {},
         hasCode: false, // used to add zClip if needed
+        //set storageKey via this.domainNameStr here so it doest have to run for check and for delete
 
         /* checkForCouponId()
            This is triggered on document.load
            Checks to see if a coupon was just clicked, and had its info stored.
            If nothing is stored nothing else in this module is triggered */
 
-        checkForCouponId: function() {
+        checkForCouponId: function(domainNameStr) {
+          
+          console.log(domainNameStr());
 
-          var storageKey = window.PHASES_APP.domainNameStr();
-              getCouponId =  localStorage.getItem( window.PHASES_APP.domainNameStr() );
+          var getCouponId =  localStorage.getItem(domainNameStr());
           
           this.couponId = getCouponId;
 
@@ -223,11 +224,11 @@
          * @Checks to see if this coupon has a code.
          * @It then sets up either the coupon or the 'Activated!' text on the modal. */
 
-        setupForCodeOrActivate: function() {
+        setupForCodeOrActivate: function(hasFlash) {
 
           if( this.coupon.code.length !== 0 ) {
             
-            this.setupCode();
+            this.setupCode(hasFlash);
           } else {
             
             this.setupActivate();
@@ -244,14 +245,8 @@
           $( this.modal.class_checkoutInstructions ).text(" and paste your code at checkout.");
           
           //Setup for flash (using input and copy btn)
-          if( window.PHASES_APP.vendor.hasFlash ) {
-            
+          if( hasFlash() ) {
             this.setupModalWithCode();
-            
-            //add zClip's copy SWF on modal load
-            //IDK YET 
-            
-            
           }
           //or not flash (with div containing code - so its copyable on mobile)
           else {
@@ -363,7 +358,7 @@
 
 
         deleteCouponInfo: function() {
-          localStorage.removeItem( window.PHASES_APP.domainNameStr() );
+          localStorage.removeItem( this.domainNameStr() );
         }
 
       }, //end loadModalModule
