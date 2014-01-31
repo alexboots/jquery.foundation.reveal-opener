@@ -73,6 +73,7 @@
 
   var PHASES_APP = PHASES_APP || {};
 
+  //has to be attatched to window so app_conf can trigger things
   window.PHASES_APP = {
 
     startClickAction: function( clicked ) {
@@ -92,11 +93,9 @@
         this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate        
         this.loadModalModule.setupForCodeOrActivate();     // check to see if it has a code or if its an 'actiavted' coupon
         this.loadModalModule.setModalOutLinks();
-        
-        this.modalActions.openModal();                  // Opens the modal. 
-
+        this.loadModalModule.openModal();                  // Opens the modal. 
+        this.loadModalModule.openModal();
         this.loadModalModule.deleteCouponInfo();           // Delete the localStorage coupon info
-
       }
     },
 
@@ -167,6 +166,7 @@
         couponId: null,
         coupon: {},
         modal:  {},
+        hasCode: false, // used to add zClip if needed
 
         /* checkForCouponId()
            This is triggered on document.load
@@ -240,7 +240,7 @@
          * @Checks for flash and hides copy button / changes from input to div (makes it selectable on mobile) if flash is not available. */
 
         setupCode: function() {
-          
+          this.hasCode = true;
           $( this.modal.class_checkoutInstructions ).text(" and paste your code at checkout.");
           
           //Setup for flash (using input and copy btn)
@@ -248,47 +248,15 @@
             
             this.setupModalWithCode();
             
-               //add zClip's copy SWF on modal load
+            //add zClip's copy SWF on modal load
+            //IDK YET 
             
-            window.PHASES_APP.loadModalModule.addZclip();
             
           }
           //or not flash (with div containing code - so its copyable on mobile)
           else {
             this.setupModalWithCode_mobile();
           }
-        },
-
-        addZclip: function() {
-          var zclipUrl = "",
-              pathArray = window.location.pathname.split('/'),
-              isInput = $(this.modal.class_code).is('input');
-
-
-
-          // zClips SWF has to be set in relation to the root url, not the page
-          // NEED TO TEST THIS - should work on everything though
-          for( i = 0; i < pathArray.length - 1 ; i++ ) {
-            if( pathArray[i].length !== 0 ) {
-              zclipUrl += "/" + pathArray[i];
-            }
-          }
-
-          $( this.modal.class_copyCodeBtn ).zclip({
-            path: zclipUrl + "/vendor/zclip/ZeroClipboard.swf",
-            copy: function() {
-              if(isInput === true) {
-                return $(this).prev().find('input').val();
-              } else {
-                return $(this).prev().text();
-              }
-            },
-            afterCopy: function() {
-
-              $(this).css("background-color", "#80BE80");
-              return $(this).text("Copied!");
-            }
-          });
         },
 
         /* setupActivate() *****************************************************
@@ -340,17 +308,14 @@
 
         },
 
-        deleteCouponInfo: function() {
-          localStorage.removeItem( window.PHASES_APP.domainNameStr() );
-        }
-
-      }, //end loadModalModule
-
-      modalActions: {
         openModal: function() {
           $('.modal-bg').css('display', 'block');
 
           this.setCloseButtons();
+          
+          if(this.hasCode) {
+            this.addZclip();
+          }
         },
 
         setCloseButtons: function() {
@@ -363,8 +328,45 @@
              $('.modal-bg').fadeOut('fast');
             }
           });
+        },
+
+
+        addZclip: function() {
+          var zclipUrl = "",
+              pathArray = window.location.pathname.split('/'),
+              isInput = $(this.modal.class_code).is('input');
+
+          // zClips SWF has to be set in relation to the root url, not the page
+          // NEED TO TEST THIS - should work on everything though
+          for( i = 0; i < pathArray.length - 1 ; i++ ) {
+            if( pathArray[i].length !== 0 ) {
+              zclipUrl += "/" + pathArray[i];
+            }
+          }
+
+          $( this.modal.class_copyCodeBtn ).zclip({
+            path: zclipUrl + "/vendor/zclip/ZeroClipboard.swf",
+            copy: function() {
+              if(isInput === true) {
+                return $(this).prev().find('input').val();
+              } else {
+                return $(this).prev().text();
+              }
+            },
+            afterCopy: function() {
+
+              $(this).css("background-color", "#80BE80");
+              return $(this).text("Copied!");
+            }
+          });
+        },
+
+
+        deleteCouponInfo: function() {
+          localStorage.removeItem( window.PHASES_APP.domainNameStr() );
         }
-      },
+
+      }, //end loadModalModule
 
       //Vendor module
       vendor: {
