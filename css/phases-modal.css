@@ -1,5 +1,5 @@
-/* 
-  The two things you need to style:
+ 
+   
     
     .modal-wrapper {
       background: red;
@@ -10,8 +10,7 @@
       width: 30px;
       background: yellow;
     }  
-*/
-
+ 
 .modal-bg {
   display: none;
   position: absolute;
@@ -37,13 +36,19 @@
 
 .modal-wrapper {
   height: 400px;
-  position: fixed;
-  width: 50%;
-  top: 60%;
-  left: 50%;
-  margin: -25% 0 0 -25%;
+  width: 40%;
+  overflow: auto;
 
-  z-index: 102;
+  margin: auto;
+  position: absolute;
+  
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+
+  z-index: 999;
 }
   .lt-ie8 .modal-wrapper {
   
@@ -52,20 +57,17 @@
 
   @media (max-width: 1130px) {
     .modal-wrapper{
-      top: 52%;
+      width: 52%;
     }
   }
   @media (max-width: 930px) {
     .modal-wrapper{
-      top: 48%;
+      width: 60%;
     }
   }
   @media (max-width: 770px) {
     .modal-wrapper{
-      top: 26%;
-      width: 80%;
-      left: 20%;
-      margin: -10% 0 0 -10%;
+      width: 90%;
     }
   }
 
