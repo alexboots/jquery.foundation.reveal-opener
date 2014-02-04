@@ -72,6 +72,7 @@
 ;(function(window) {
 
   var PHASES_APP = PHASES_APP || {};
+  
 
   //has to be attatched to window so app_conf can trigger things
   window.PHASES_APP = {
@@ -79,43 +80,79 @@
     startClickAction: function( clicked ) {
 
       var couponId = this.onClickModule.getCouponId( clicked ); // Grabs and saves all of the coupon info in Coupon: {}
-      this.onClickModule.saveCouponId( couponId, this.vendor.supports_html5_storage, this.domainNameStr );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
+      this.onClickModule.saveCouponId( couponId, this.info.supports_html5_storage, this.info.storageKey );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
       this.onClickModule.clickAction();          // Opens merchant in same page and opens modal in new tab
-
     },
 
     //this.startClickAction.getAppName() + "tempCouponInfo",
     startModalAction: function( app_conf ) {
-
-      if( this.loadModalModule.checkForCouponId(this.domainNameStr) === true ) {
-        console.log(this.domainNameStr);
+      
+      if( this.loadModalModule.checkForCouponId(this.info.storageKey) === true ) {
+        
         this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate        
-        this.loadModalModule.setupForCodeOrActivate(this.vendor.hasFlash);     // check to see if it has a code or if its an 'actiavted' coupon
+        this.loadModalModule.setupForCodeOrActivate(this.info.hasFlash);     // check to see if it has a code or if its an 'actiavted' coupon
         this.loadModalModule.setModalOutLinks();
         this.loadModalModule.openModal();                  // Opens the modal. 
         this.loadModalModule.openModal();
-        this.loadModalModule.deleteCouponInfo(this.domainNameStr);           // Delete the localStorage coupon info
+        this.loadModalModule.deleteCouponInfo(this.info.storageKey);           // Delete the localStorage coupon info
       }
     },
 
-    /* domainNameStr(). 
+    // /* onClickModule {} contains everything used in startClickAction() */
+    // /*******************************************************************/
+    // siteSpecificModule: (function(){ //not sure how to get this working yet 
+    //   /* eg: if( app_config.app_name === wac_app )  { wac_app.someFunc() }; */
+    // }),
 
-      This is the localStorage key, used to save and get the couponId.
-      Grabs the domain name and makes it a string.      
-      Seemed like a good way to get a unique key - could do it some other way. */
+    /**** END trigger  functions ****/
 
-    domainNameStr: function() {
-      var hostArray = window.location.hostname.split('.'),
-          hostString = hostArray.join('');
 
-      return hostString;
-    },
+    /*** START Modules ***/
+    /*********************/
 
-    /* onClickModule {} contains everything used in startClickAction() */
-    /*******************************************************************/
-    siteSpecificModule: (function(){ //not sure how to get this working yet 
-      /* eg: if( app_config.app_name === wac_app )  { wac_app.someFunc() }; */
-    }),
+      /* Info : info for functions module - gets info on page load thats needed to trigger everything! */
+      /*************************************************************************************************/
+      info: {
+        //check for html5 support
+        supports_html5_storage: (function() {
+          
+          try {
+            return 'localStorage' in window && window['localStorage'] !== null;
+          } catch (e) {
+            
+            return false;
+          }
+        })(),
+
+        /***********************   hasFlash info   *************************
+        * @Self executing function 
+        * @Checks to see if the browsers has flash available. 
+        ********************************************************************/
+        hasFlash: (function() {
+          var hasFlash = false;
+          try {
+            var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+            if(fo) hasFlash = true;
+          }catch(e){
+            if(navigator.mimeTypes ["application/x-shockwave-flash"] !== undefined) hasFlash = true;
+          }
+          return hasFlash;
+        })(),
+
+        /* (storageKey)() 
+
+          This is the localStorage key, used to save and get the couponId.
+          Grabs the domain name and makes it a string.      
+          Seemed like a good way to get a unique key - could do it some other way. */
+
+        storageKey: (function() {
+          var hostArray = window.location.hostname.split('.'),
+              hostString = hostArray.join('');
+
+          return hostString;
+        })(),
+      },
+      /*** end infoForFunctions module ***/
 
       /* onClickModule {} contains everything used in startClickAction() */
       /*******************************************************************/
@@ -136,14 +173,19 @@
            Saved the coupon Id so the modal can use it to load all the coupon info.
            Uses the sites URL as the key to store and grab the coupon. */
 
-        saveCouponId: function( couponId, supports_html5_storage, domainNameStr ) {
+        saveCouponId: function( couponId, supports_html5_storage, storageKey ) {
           //if localStorage is supported (ie8+)
-          if(supports_html5_storage() ){
+          if(supports_html5_storage){
 
-            localStorage.setItem( domainNameStr(), couponId);
+            localStorage.setItem( storageKey, couponId);
 
           } else {
-            //$ get cookie script
+            //$ get cookie script            
+
+            $.getScript("/vendor/js/cookies.js");
+
+            docCookies.setItem( storageKey, coupon_id );
+
           }
         },
 
@@ -166,19 +208,16 @@
         coupon: {},
         modal:  {},
         hasCode: false, // used to add zClip if needed
-        //set storageKey via this.domainNameStr here so it doest have to run for check and for delete
+        //set storageKey via this.storageKey here so it doest have to run for check and for delete
 
         /* checkForCouponId()
            This is triggered on document.load
            Checks to see if a coupon was just clicked, and had its info stored.
            If nothing is stored nothing else in this module is triggered */
 
-        checkForCouponId: function(domainNameStr) {
-          
-          console.log(domainNameStr());
+        checkForCouponId: function(storageKey) {
 
-          var getCouponId =  localStorage.getItem(domainNameStr());
-          
+          var getCouponId =  localStorage.getItem(storageKey);
           this.couponId = getCouponId;
 
           if(this.couponId !== null) { // if there is saved coupon info, set off the modal methods          
@@ -240,12 +279,12 @@
          * @Checks for html5 storage, and falls back to cookie for old browsers.
          * @Checks for flash and hides copy button / changes from input to div (makes it selectable on mobile) if flash is not available. */
 
-        setupCode: function() {
+        setupCode: function(hasFlash) {
           this.hasCode = true;
           $( this.modal.class_checkoutInstructions ).text(" and paste your code at checkout.");
           
           //Setup for flash (using input and copy btn)
-          if( hasFlash() ) {
+          if( hasFlash ) {
             this.setupModalWithCode();
           }
           //or not flash (with div containing code - so its copyable on mobile)
@@ -271,7 +310,6 @@
 
         setupModalWithCode: function () {
           
-
           if( $(this.modal.class_code).is('input') ) {
             
             $( this.modal.class_code ).val( this.coupon.code );
@@ -357,45 +395,11 @@
         },
 
 
-        deleteCouponInfo: function() {
-          localStorage.removeItem( this.domainNameStr() );
+        deleteCouponInfo: function(storageKey) {
+          localStorage.removeItem(storageKey);
         }
 
-      }, //end loadModalModule
-
-      //Vendor module
-      vendor: {
-        //check for html5 support
-        supports_html5_storage: function() {
-          
-          try {
-            return 'localStorage' in window && window['localStorage'] !== null;
-          } catch (e) {
-            
-            return false;
-          }
-        },
-        //set a cookie - this is only used if html5 support is not available 
-        set_cookie : function () {
-        //set cookie if no html5
-
-        },
-
-        /***********************   hasFlash info   *************************
-        * @Self executing function 
-        * @Checks to see if the browsers has flash available. 
-        ********************************************************************/
-        hasFlash: (function() {
-          var hasFlash = false;
-          try {
-            var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
-            if(fo) hasFlash = true;
-          }catch(e){
-            if(navigator.mimeTypes ["application/x-shockwave-flash"] !== undefined) hasFlash = true;
-          }
-          return hasFlash;
-        })()
-      }//vendor module
+      } //end loadModalModule
 
   };//PHASES_APP
 })(this);
