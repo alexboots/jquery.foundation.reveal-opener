@@ -79,25 +79,27 @@
 
     startClickAction: function( clicked ) {
 
-      var couponId = this.onClickModule.getCouponId( clicked ); // Grabs and saves all of the coupon info in Coupon: {}
-      this.onClickModule.saveCouponId( couponId, this.info.supports_html5_storage, this.info.storageKey );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
-      this.onClickModule.clickAction();          // Opens merchant in same page and opens modal in new tab
+      var couponId = Modules.onClickModule.getCouponId( clicked ); // Grabs and saves all of the coupon info in Coupon: {}
+      Modules.onClickModule.saveCouponId( couponId, Modules.info.supports_html5_storage, Modules.info.storageKey );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
+      Modules.onClickModule.clickAction();          // Opens merchant in same page and opens modal in new tab
     },
 
     //this.startClickAction.getAppName() + "tempCouponInfo",
     startModalAction: function( app_conf ) {
       
-      if( this.loadModalModule.checkForCouponId(this.info.storageKey) === true ) {
+      if( Modules.loadModalModule.checkForCouponId(Modules.info.storageKey) === true ) {
         
-        this.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate        
-        this.loadModalModule.setupForCodeOrActivate(this.info.hasFlash);     // check to see if it has a code or if its an 'actiavted' coupon
-        this.loadModalModule.setModalOutLinks();
-        this.loadModalModule.openModal();                  // Opens the modal. 
-        this.loadModalModule.openModal();
-        this.loadModalModule.deleteCouponInfo(this.info.storageKey);           // Delete the localStorage coupon info
+        Modules.loadModalModule.placeMostCouponInfoOnModal( app_conf ); // Place everything except for get code / activate        
+        Modules.loadModalModule.setupForCodeOrActivate(Modules.info.hasFlash);     // check to see if it has a code or if its an 'actiavted' coupon
+        Modules.loadModalModule.setModalOutLinks();
+        Modules.loadModalModule.openModal();                  // Opens the modal. 
+        Modules.loadModalModule.openModal();
+        Modules.loadModalModule.deleteCouponInfo(Modules.info.storageKey);           // Delete the localStorage coupon info
       }
-    },
+    }
+  };
 
+  Modules = {
     // /* onClickModule {} contains everything used in startClickAction() */
     // /*******************************************************************/
     // siteSpecificModule: (function(){ //not sure how to get this working yet 
@@ -181,7 +183,7 @@
 
           } else {
             //$ get cookie script            
-
+            alert('f');
             $.getScript("/vendor/js/cookies.js");
 
             docCookies.setItem( storageKey, coupon_id );
@@ -401,7 +403,7 @@
 
       } //end loadModalModule
 
-  };//PHASES_APP
+  };//PHASES_MODULES
 })(this);
 
 /* add this debug code later 
