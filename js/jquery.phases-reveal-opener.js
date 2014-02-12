@@ -235,10 +235,10 @@
           
           var class_couponId = "." + this.couponId;
 
-          this.coupon.title     = $( class_couponId + " " + app_conf.class_couponTitle ).text();
-          this.coupon.code      = $( class_couponId + " " + app_conf.class_couponCode  ).text();
-          this.coupon.fullInfo  = $( class_couponId + " " + app_conf.class_fullCouponInfo ).text();
-          this.coupon.storeName = $( class_couponId + " " + app_conf.class_storeName ).text();
+          this.coupon.title     = $.trim( $( class_couponId + " " + app_conf.class_couponTitle ).text()    );
+          this.coupon.code      = $.trim( $( class_couponId + " " + app_conf.class_couponCode  ).text()    );
+          this.coupon.fullInfo  = $.trim( $( class_couponId + " " + app_conf.class_fullCouponInfo ).text() );
+          this.coupon.storeName = $.trim( $( class_couponId + " " + app_conf.class_storeName ).text()      );
           this.coupon.outLink   = $( class_couponId + " " + app_conf.class_outLink ).attr('href');
 
           this.modal.id       = app_conf.id_modal;
