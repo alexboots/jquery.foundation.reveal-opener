@@ -80,7 +80,7 @@
     startClickAction: function( clicked ) {
 
       var couponId = Modules.onClickModule.getCouponId( clicked ); // Grabs and saves all of the coupon info in Coupon: {}
-      Modules.onClickModule.saveCouponId( couponId, Modules.info.supports_html5_storage, Modules.info.storageKey );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
+      Modules.onClickModule.saveCouponId( couponId, Modules.info.storageKey );         // Saves couponId to localStorage or with a cookie (just using app_name as key)
       Modules.onClickModule.clickAction();          // Opens merchant in same page and opens modal in new tab
     },
 
@@ -115,16 +115,6 @@
       /* Info : info for functions module - gets info on page load thats needed to trigger everything! */
       /*************************************************************************************************/
       info: {
-        //check for html5 support
-        supports_html5_storage: (function() {
-          
-          try {
-            return 'localStorage' in window && window['localStorage'] !== null;
-          } catch (e) {
-            
-            return false;
-          }
-        })(),
 
         /***********************   hasFlash info   *************************
         * @Self executing function 
@@ -176,22 +166,9 @@
            Saved the coupon Id so the modal can use it to load all the coupon info.
            Uses the sites URL as the key to store and grab the coupon. */
 
-        saveCouponId: function( couponId, supports_html5_storage, storageKey ) {
-
-          //if localStorage is supported (ie8+)
-          if(supports_html5_storage){
+        saveCouponId: function( couponId, storageKey ) {
 
             localStorage.setItem( storageKey, couponId);
-
-          } else {
-            //$ get cookie script            
-            //WORKING - alerts in ie7 - works in ie8
-            alert('use cookies');
-            //$.getScript("/vendor/js/cookies.js");
-
-            //docCookies.setItem( storageKey, coupon_id );
-
-          }
         },
 
         /* clickAction() *************************************
@@ -281,7 +258,6 @@
 
         /* setupCode() **********************************************************
          * @Sets up the code on the modal. 
-         * @Checks for html5 storage, and falls back to cookie for old browsers.
          * @Checks for flash and hides copy button / changes from input to div (makes it selectable on mobile) if flash is not available. */
 
         setupCode: function(hasFlash) {
