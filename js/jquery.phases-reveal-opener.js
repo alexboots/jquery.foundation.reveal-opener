@@ -168,7 +168,8 @@
         getCouponId: function( clicked ) {
 
           // Grabs the coupon Id
-          return $( clicked ).attr('href').match(/\d+$/)[0].trim();
+          var url = $( clicked ).attr('href');
+          return url.match(/\d+$/); //can't use ^ at beginning as it bugs ie7
         },
 
         /* saveCouponId()  ********************************
@@ -176,6 +177,7 @@
            Uses the sites URL as the key to store and grab the coupon. */
 
         saveCouponId: function( couponId, supports_html5_storage, storageKey ) {
+
           //if localStorage is supported (ie8+)
           if(supports_html5_storage){
 
@@ -183,10 +185,11 @@
 
           } else {
             //$ get cookie script            
-            alert('f');
-            $.getScript("/vendor/js/cookies.js");
+            //WORKING - alerts in ie7 - works in ie8
+            alert('use cookies');
+            //$.getScript("/vendor/js/cookies.js");
 
-            docCookies.setItem( storageKey, coupon_id );
+            //docCookies.setItem( storageKey, coupon_id );
 
           }
         },
@@ -232,11 +235,11 @@
           
           var class_couponId = "." + this.couponId;
 
-          this.coupon.title     = $( class_couponId + " " + app_conf.class_couponTitle ).text().trim();
-          this.coupon.code      = $( class_couponId + " " + app_conf.class_couponCode  ).text().trim();
-          this.coupon.fullInfo  = $( class_couponId + " " + app_conf.class_fullCouponInfo ).text().trim();
-          this.coupon.storeName = $( class_couponId + " " + app_conf.class_storeName ).text().trim();
-          this.coupon.outLink   = $( class_couponId + " " + app_conf.class_outLink ).attr('href').trim();
+          this.coupon.title     = $( class_couponId + " " + app_conf.class_couponTitle ).text();
+          this.coupon.code      = $( class_couponId + " " + app_conf.class_couponCode  ).text();
+          this.coupon.fullInfo  = $( class_couponId + " " + app_conf.class_fullCouponInfo ).text();
+          this.coupon.storeName = $( class_couponId + " " + app_conf.class_storeName ).text();
+          this.coupon.outLink   = $( class_couponId + " " + app_conf.class_outLink ).attr('href');
 
           this.modal.id       = app_conf.id_modal;
           this.modal.class_title    = app_conf.class_couponTitle_modal;
